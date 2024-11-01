@@ -1,0 +1,103 @@
+import random
+
+ranks = ("2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A")
+
+suits = ("hearts", "diamonds", "clubs", "spades")
+
+deck = [(rank, suit) for rank in ranks for suit in suits]
+
+def deck_shuffle(deck):
+    random.shuffle(deck)
+    return deck
+deck_shuffle = deck_shuffle(deck)
+print("Shuffled cards")
+for card in deck_shuffle:
+    print(card)
+def split_deck(deck):
+    half = (len(deck)) // 2
+    return deck[:half], deck[half:]
+  
+player1_hand, player2_hand = split_deck(deck_shuffle)
+
+print("Shuffled Deck:")
+for card in deck_shuffle:
+    print(card)
+
+print("\nPlayer 1 Hand:")
+for card in player1_hand:
+    print(card)
+
+print("\nPlayer 2 Hand:")
+for card in player2_hand:
+    print(card)
+def card_comparison(p1_card, p2_card):
+
+    p1_card_value = ranks.index(p1_card[0])
+    p2_card_value = ranks.index(p2_card[0])
+    
+    if p1_card_value > p2_card_value:
+        return 1
+    elif p2_card_value > p1_card_value:
+        return 2
+    else:
+        return 0
+
+def war(player1_hand, player2_hand, p1_card, p2_card):
+    print("It's a war!")
+    war_pile = [p1_card, p2_card]
+    
+    # Both players put down 3 cards
+    if len(player1_hand) < 4 or len(player2_hand) < 4:
+        print("Not enough cards for war! Game over.")
+        return
+
+    for _ in range(3):
+        war_pile.append(player1_hand.pop(0))  # Player 1's cards
+        war_pile.append(player2_hand.pop(0))  # Player 2's cards
+    
+    # Both players flip the next card
+    p1_war_card = player1_hand.pop(0)
+    p2_war_card = player2_hand.pop(0)
+    
+    print(f"Player 1 plays (war): {p1_war_card}, Player 2 plays (war): {p2_war_card}")
+    
+    # Determine the winner of the war
+    if card_comparison(p1_war_card, p2_war_card) == 1:
+        player1_hand.extend(war_pile + [p1_war_card])
+        print("Player 1 wins the war!")
+    else:
+        player2_hand.extend(war_pile + [p2_war_card])
+        print("Player 2 wins the war!")
+
+def play_round(player1_hand, player2_hand):
+    if not player1_hand or not player2_hand:
+        return
+    #use pop function to draw the first card from each deck
+    p1_card = player1_hand.pop(0)
+    p2_card = player2_hand.pop(0)
+    
+    print(f"Player 1 plays: {p1_card}")
+    print(f"Player 2 plays: {p2_card}")
+    outcome = card_comparison(p1_card, p2_card)
+    
+    if outcome == 1:
+        print("Player 1 wins the round!(ur so good)")
+        player1_hand.extend(p1_card, p2_card)
+    elif outcome == 2:
+        print("Player 2 wins the round!(ur so good)")
+        player2_hand.extend(p1_card, p2_card)
+    else:
+        war(player1_hand, player2_hand, p1_card, p2_card)
+
+def play_game():
+    """Main function to run the game."""
+    while player1_hand and player2_hand:
+        play_round(player1_hand, player2_hand)
+
+    if player1_hand:
+        print("Player 1 wins the game!")
+    else:
+        print("Player 2 wins the game!")
+
+if __name__ == "__main__":
+    play_game()
